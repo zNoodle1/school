@@ -56,24 +56,29 @@
   </div>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Define start and end times in milliseconds (EST)
-      const startTime = new Date('2024-01-30T14:00:00').getTime(); // 9:00 am EST
-      const endTime = new Date('2024-01-30T20:18:00').getTime(); // 3:18 pm EST
-
       const progressBar = document.getElementById('progress');
       const timeText = document.getElementById('time-text');
 
       function updateProgressBar() {
-        const currentTime = new Date().getTime();
+        const currentTime = new Date();
+        const schoolStart = new Date(currentTime);
+        schoolStart.setHours(9, 0, 0); // Set school start time to 9:00 am
 
-        if (currentTime >= endTime) {
+        const schoolEnd = new Date(currentTime);
+        schoolEnd.setHours(15, 18, 0); // Set school end time to 3:18 pm
+
+        if (currentTime >= schoolEnd) {
           // School is over after 3:18 pm EST
           timeText.textContent = 'School is over :)';
           progressBar.style.width = '100%'; // Set progress bar to full width
           progressBar.style.backgroundColor = '#c0c0c0'; // Set progress bar color to grey
+        } else if (currentTime < schoolStart) {
+          // Before school starts
+          timeText.textContent = 'School starts at 9:00 AM';
+          progressBar.style.width = '0%';
         } else {
-          const totalTime = endTime - startTime;
-          const elapsedTime = currentTime - startTime;
+          const totalTime = schoolEnd - schoolStart;
+          const elapsedTime = currentTime - schoolStart;
 
           // Calculate progress percentage
           const progress = (elapsedTime / totalTime) * 100;
@@ -83,7 +88,7 @@
           progressBar.style.backgroundColor = 'green'; // Reset progress bar color
 
           // Calculate remaining time
-          const remainingTime = Math.max(0, endTime - currentTime);
+          const remainingTime = Math.max(0, schoolEnd - currentTime);
           const hours = Math.floor(remainingTime / (1000 * 60 * 60));
           const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
           const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
